@@ -2,6 +2,8 @@
 
 This is a repository for code used for analysis of imaging and behavioural data in the manuscript d’Aquin et al. entitled "A corticospinal circuit conveys pain expectation and modulates nociceptive behavior". 
 
+This code was written on MATLAB R2021b and tested on Windows Server 2022, version 21H2. The installed MATLAB add-ons are: Financial Toolbox v6.2, Curve Fitting Toolbox v3.6, Parallel Computing Toolbox v7.5, Statistics and Machine Learning Toolbox v12.2, Simulink v10.4, Signal Processing Toolbox v8.7, Optimization Toolbox v9.2, MATLAB Report Generator v5.11, MATLAB Compiler SDK v6.11, MATLAB Coder v5.3, Image Processing Toolbox v11.4, Image Acquisition Toolbox v6.5, Database Toolbox v10.2, and MATLAB Compiler v8.3.
+
 # data acquisition
 Data is organized as Mouse Label / Sessions (here, "1 hab", "2 cond", "3 ret", and for some experiments "4 fullcond", "5 fullcond") / Date of session / Files from the recordings. With the help of the overhead camera recordings and miniscope imaging data collected via MATLAB R2021b, Inscopix software and miniscope DAQ box, and miniscope DAQ software (https://aharoni-lab.com/), the output files include "My_WebCam" folder with the behavioural recording, "My_V3_Miniscope" folder with the miniscope recordings, "(sessionname).mat", and metaData files.
 
