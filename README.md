@@ -7,13 +7,14 @@ This code was written on MATLAB R2021b and tested on Windows Server 2022, versio
 No formal installation is required. Download the folders, open MATLAB, add the repository and all subfolders to the MATLAB path, install the listed external dependencies, and update the input/output paths in the main scripts (~5–10 min excluding installation of MATLAB and external packages/add-ons).
 
 # data acquisition
-Data is organized as Mouse Label / Sessions (here, "1 hab", "2 cond", "3 ret", and for some experiments "4 fullcond", "5 fullcond") / Date of session / Files from the recordings. With the help of the overhead camera recordings and miniscope imaging data collected via MATLAB R2021b, Inscopix software and miniscope DAQ box, and miniscope DAQ software (https://aharoni-lab.com/), the output files include "My_WebCam" folder with the behavioural recording, "My_V3_Miniscope" folder with the miniscope recordings, "(sessionname).mat", and metaData files.
+With the help of the overhead camera recordings and miniscope imaging data collected via MATLAB R2021b, Inscopix software and miniscope DAQ box, and miniscope DAQ software (https://aharoni-lab.com/), the output files include "My_WebCam" folder with the behavioural recording, "My_V3_Miniscope" folder with the miniscope recordings, "(sessionname).mat", and metaData files.
 
-# sample data
+Data is organized as Mouse Label / Sessions (here, "1 hab", "2 cond", "3 ret", and for some experiments "4 fullcond", "5 fullcond") / Date of session / Files from the recordings. 
+### sample data
 A sample dataset is provided in "SD047_fullcond_S1_CST_miniscope_behavior". Update the relevant paths in the MATLAB script and run the scripts based on the instructions below and the comments in the scripts.
 
 # overview of analysis
-Change the required paths, parent directories, and specific options as needed in the MATLAB R2021b codes:
+Change the required paths, parent directories, and specific options as needed in the MATLAB scripts:
 * "freezing_20240214.m" = imports, synchronizes, resamples, and organizes the raw behavioral and movement data for further analysis (binarizes recordings and tracks location over time)
 * "preprocessing_20250709.m" = preprocesses imaging and behavioural data for each test, combines test data per session, runs CNMFE on session data, allows manual curation of traces, and an option to find global cells or same cells present in different sessions
 * "analysis1P_master_20250709_ek.m" = combines behavioral and imaging data to calculate response measures, compare conditions or groups, perform statistics, and generate figures
@@ -28,8 +29,8 @@ Change the required paths, parent directories, and specific options as needed in
 * Distance covered by mice in response to the painful stimulus: To calculate this, the integral velocity over a 2 s window following the onset of the blue light stimulus is considered.
 
 ## analysis of imaging data
-* Raw imaging movies are preprocessed by subtracting acquisition noise (acquired with the miniature microscope lid on) from each frame, spatial down-sampling by a factor of two, and non-rigid image registration with NoRMCorre (Pnevmatikakis et al., 2017). 
-* Single-cell ROIs extraction involving denoising, deconvolution, and demixing is obtained by applying constrained non-negative matrix factorization (CNMFE; Zhou et al., 2018) to the preprocessed imaging movies on each session. ROIs detected at the proximity of the prism edge are removed from further analysis.
+* Raw imaging movies are preprocessed by subtracting acquisition noise (acquired with the miniature microscope lid on) from each frame, spatial down-sampling by a factor of two, and non-rigid image registration with NoRMCorre (Pnevmatikakis et al., 2017 https://www.sciencedirect.com/science/article/pii/S0165027017302753). 
+* Single-cell ROIs extraction involving denoising, deconvolution, and demixing is obtained by applying constrained non-negative matrix factorization (CNMFE; Zhou et al., 2018 https://elifesciences.org/articles/28728) to the preprocessed imaging movies on each session. ROIs detected at the proximity of the prism edge are removed from further analysis.
 * The extracted calcium traces are then manually curated by visual inspection with the following exclusion criteria: absence of clear calcium transients (sharp rise and slow decay), drifting baseline, presence of negative transients, very slow transients (indicative of reduced calcium buffering capacity).
 * Calcium traces are z-scored z = (X−μ) / σ; X = value being measured; μ = mean of the group of values; σ = standard deviation of the group of values.   
 ### stimulus-response analysis in the study
