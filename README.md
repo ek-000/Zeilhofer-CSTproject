@@ -8,11 +8,11 @@ Data is organized as Mouse Label / Sessions (here, "1 hab", "2 cond", "3 ret", a
 # overview of analysis
 Change the required paths, parent directories, and specific options as needed in the MATLAB R2021b codes:
 * "freezing_20240214.m" = imports, synchronizes, resamples, and organizes the raw behavioral and movement data for further analysis (binarizes recordings and tracks location over time)
-* "preprocessing_20250709.m" = preprocesses imaging and behavioural data for each test, combines test data per session, runs CNMFE on session data, allows manual curation of traces, and an option to find global cells or same cells present in different sessions.
-* "analysis1P_master_20250709_ek.m" = combines behavioral and imaging data to calculate response measures, compare conditions or groups, perform statistics, and generate figures.
+* "preprocessing_20250709.m" = preprocesses imaging and behavioural data for each test, combines test data per session, runs CNMFE on session data, allows manual curation of traces, and an option to find global cells or same cells present in different sessions
+* "analysis1P_master_20250709_ek.m" = combines behavioral and imaging data to calculate response measures, compare conditions or groups, perform statistics, and generate figures
 
 ## analysis of behavioural data
-* The behavioral movies will be binarized with an adaptive threshold considering the darkest pixel values on each frame to account for changes in illumination due to the floor LED array. 
+* The behavioral movies are binarized with an adaptive threshold considering the darkest pixel values on each frame to account for changes in illumination due to the floor LED array. 
 * A morphological filter (image dilation) is applied to the binarized movie to filter out the miniature microscope cable.
 * Locomotion:
 * * The mouse’s centroid location over time is used to calculate locomotion.
@@ -21,10 +21,10 @@ Change the required paths, parent directories, and specific options as needed in
 * Distance covered by mice in response to the painful stimulus: To calculate this, the integral velocity over a 2 s window following the onset of the blue light stimulus is considered.
 
 ## analysis of imaging data
-* Raw imaging movies are preprocessed by subtracting acquisition noise (acquired with the miniature microscope lid on, covering the miniature microscope) from each frame, spatial down-sampling by a factor of two, and non-rigid image registration with NoRMCorre (Pnevmatikakis et al., 2017). 
-* Single-cell ROIs extraction involving denoising, deconvolution, and demixing is obtained by applying constrained nonnegative matrix factorization (CNMFE; Zhou et al., 2018) to the preprocessed imaging movies on each session. ROIs detected at the proximity of the prism edge are removed from further analysis.
-* The extracted calcium traces are then manually curated by visual inspection, with the following exclusion criteria: absence of clear calcium transients (sharp rise and slow decay), drifting baseline, presence of negative transients, very slow transients (indicative of reduced calcium buffering capacity).
-* Calcium traces are z-scored: z = (X−μ) / σ ; X = value being measured; μ = mean of the group of values; σ = standard deviation of the group of values.   
+* Raw imaging movies are preprocessed by subtracting acquisition noise (acquired with the miniature microscope lid on) from each frame, spatial down-sampling by a factor of two, and non-rigid image registration with NoRMCorre (Pnevmatikakis et al., 2017). 
+* Single-cell ROIs extraction involving denoising, deconvolution, and demixing is obtained by applying constrained non-negative matrix factorization (CNMFE; Zhou et al., 2018) to the preprocessed imaging movies on each session. ROIs detected at the proximity of the prism edge are removed from further analysis.
+* The extracted calcium traces are then manually curated by visual inspection with the following exclusion criteria: absence of clear calcium transients (sharp rise and slow decay), drifting baseline, presence of negative transients, very slow transients (indicative of reduced calcium buffering capacity).
+* Calcium traces are z-scored z = (X−μ) / σ; X = value being measured; μ = mean of the group of values; σ = standard deviation of the group of values.   
 ### stimulus-response analysis in the study
 * A neuron was considered responsive to a tone or light stimulus presentation when its z-scored calcium activity during the stimulus response window was significantly higher than during the 5 s baseline preceding the stimulus onset.
 * A neuron was considered tone- or light-responsive when its z-scored calcium activity averaged over all stimuli presentations was significantly higher during the stimulus response window than during baseline.
@@ -33,6 +33,6 @@ Change the required paths, parent directories, and specific options as needed in
 * For Venn diagrams, the expected chance overlap between neurons responsive to stimuli A and B was calculated as P(A).P(B) (P = proportion of neurons responsive to a given stimulus).
 * Single-cell stimulus response correlations were calculated using linear regression on the mean response amplitudes of individual neurons for the two stimuli considered.
 ### global cells identification 
-To identify global cells (ROIs identified in all recording sessions for a given animal), the spatial footprints of the extracted ROIs in each session are registered in Matlab and ROIs with > 60 % spatial overlap between all consecutive sessions are considered global cells. 
+Global cells are ROIs identified in all recording sessions for a given animal. To identify them, the spatial footprints of the extracted ROIs in each session are registered in MATLAB and ROIs with >60 % spatial overlap between all consecutive sessions are considered global cells. 
 
-Please direct any questions regarding the analysis on this repository to eshita.kamal@pharma.uzh.ch and simondaquin@gmail.com.
+Please direct any questions regarding the analysis on this repository to simondaquin@gmail.com and eshita.kamal@pharma.uzh.ch.
