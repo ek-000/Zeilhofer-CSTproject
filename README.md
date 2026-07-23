@@ -15,9 +15,9 @@ A sample dataset ("SD047_fullcond_S1_CST_miniscope_behavior") has been provided.
 
 # overview of analysis
 Change the required paths, parent directories, and specific options as needed in the MATLAB scripts:
-* "freezing_20240214.m" = imports, synchronizes, resamples, and organizes the raw behavioral and movement data for further analysis (binarizes recordings and tracks location over time)
-* "preprocessing_20250709.m" = preprocesses imaging and behavioural data for each test, combines test data per session, runs CNMFE on session data, allows manual curation of traces, and an option to find global cells or same cells present in different sessions
-* "analysis1P_master_20250709_ek.m" = combines behavioral and imaging data to calculate response measures, compare conditions or groups, perform statistics, and generate figures
+* freezing_20240214.m = imports, synchronizes, resamples, and organizes the raw behavioral and movement data for further analysis (binarizes recordings and tracks location over time)
+* preprocessing_20250709.m = preprocesses imaging and behavioural data for each test, combines test data per session, runs CNMFE on session data, allows manual curation of traces, and an option to find global cells or same cells present in different sessions
+* analysis1P_master_20250709_ek.m = combines behavioral and imaging data to calculate response measures, compare conditions or groups, perform statistics, and generate figures
 
 ## analysis of behavioural data
 * The behavioral movies are binarized with an adaptive threshold considering the darkest pixel values on each frame to account for changes in illumination due to the floor LED array. 
