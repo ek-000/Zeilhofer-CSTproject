@@ -1,0 +1,123 @@
+function [stim,data]= load_1P_data(filename,folder,stim,par)
+
+% loads all data: session traces and infos, including timestamps
+% Z scores the traces too.
+
+% get folder
+mouse_folder_list= GetSubDirsFirstLevelOnly(folder.parentDir{stim.group});
+mouse_folder_list(find(~cellfun(@isempty,strfind(mouse_folder_list ,'freezing'))))=[];
+mouse_folder_list(find(~cellfun(@isempty,strfind(mouse_folder_list ,'result'))))=[];
+
+if isempty(stim.mice)
+    mice= 1:length(mouse_folder_list);
+else
+    mice= stim.mice;
+end
+
+
+fprintf('\n loading data \n')
+
+for imouse= mice
+    % get folders
+    session_folder_list = GetSubDirsFirstLevelOnly(fullfile(folder.parentDir{stim.group},mouse_folder_list{imouse}));
+    session_folder_list(find(~cellfun(@isempty,strfind(session_folder_list ,'shock'))))=[]; % ignore shock grid sessions
+    if isempty(stim.sessions)
+        sessions= 1:length(session_folder_list);
+    else
+        sessions= stim.sessions;
+    end
+
+    for isession= sessions
+
+        % get folders
+        cnmfeFolder= fullfile(folder.parentDir{stim.group},mouse_folder_list{imouse},session_folder_list{isession},filename.session_data_cnmfe);
+        %% load motion and freezing (if exist)
+        cd(fullfile(folder.parentDir{stim.group},mouse_folder_list{imouse},session_folder_list{isession}))
+        motionDir= dir(['*\' filename.motion]);
+        if isempty(motionDir)
+            motionDir= dir(filename.motion);
+        end
+        if ~isempty(motionDir)
+            mot= load(fullfile(motionDir.folder, motionDir.name));
+        else
+            mot.mot=[];
+        end
+
+        %% load conditioning behavior (incl. freezing) (if exist)
+        freezingDir= dir(['*\' filename.freezing]);
+        if ~isempty(freezingDir)
+            freez= load(fullfile(freezingDir.folder, freezingDir.name));
+        else
+            freez.behavior=[];
+        end
+
+        %% load session info
+        info= load(fullfile(folder.parentDir{stim.group},mouse_folder_list{imouse},session_folder_list{isession},filename.session_info));
+        info= info.session_info;
+
+        fr= info.info(1).frame_rate; % miniscope frame rate
+
+        % get behavior timestamps
+        % get timestamps for each test
+        if ismember(isession,stim.session.conditioning)
+            try
+                info.timestamps= {info.behavior.tone.tson', info.behavior.US.tson'};
+            catch % initially the US channel was named 'aver'
+                info.timestamps= {info.behavior.tone.tson', info.behavior.aver.tson'};
+            end
+
+        elseif ismember(isession,stim.session.sensoryStim)
+            info.timestamps= {info.behavior.stim_start_sec};
+        end
+
+        % add time for each test to fit traces (otherwise all start at t=0)
+        if length(info.timestamps)>1 && ismember(isession,stim.session.sensoryStim)
+            for itest= 2:length(info.timestamps)
+                info.timestamps{itest}= info.timestamps{itest} + sum( [info.info(1:itest-1).nframe] ) /fr;
+            end
+        end
+
+        % load session neuronal activity
+        if ~contains(folder.parentDir{stim.group}, 'behavior only')
+            cnmfedat= load(fullfile(cnmfeFolder,filename.cnmfe_results_curated));
+            traces= cnmfedat.S.C_raw';
+            spikes= cnmfedat.S.S';
+            spikes(spikes>0)= 1; % binarize spikes
+
+            % get global cells (if exists)
+            info.global_cells= cnmfedat.S.neurons_per_patch;
+
+            % zscore and filter traces
+%             if ~isempty(par.range) % limit data range to consider for zscore
+%                 for icell= 1:size(traces,2)
+%                     mu= mean(traces(par.range,icell));
+%                     sig= std(traces(par.range,icell));
+%                     traces(:,icell)= (traces(:,icell)-mu) / sig;
+%                 end
+%             else
+%                 traces= zscore(traces,0,1); % z score data
+%             end
+        else
+            traces=[]; spikes=[];
+        end
+
+        % concatenate sessions data and info
+        data(imouse,isession).traces= traces';
+        data(imouse,isession).spikes= spikes';
+        data(imouse,isession).info= info;
+        try
+            data(imouse,isession).motion= mot.mot;
+        catch
+            data(imouse,isession).motion= [];
+        end
+        data(imouse,isession).behavior= freez.behavior;
+    end
+end
+
+% append to stim
+stim.fr= data(end,end).info.info(1).frame_rate;
+stim.mice= 1:size(data,1);
+stim.sessions= 1:size(data,2);
+
+fprintf('\n done \n')
+end
